@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO map</title>
+  </head>
+  <body>
+
+    <div id="users"></div>
+
+    <% if(users.length) { %>
+      <% users.forEach(({name, distance, hours}) => { %>
+        <ul>
+          <li>name: <%= name %></li>
+          <li>distance: <%= distance %></li>
+          <li>hours: <%= hours %></li>
+        </ul>
+      <% }) %> 
+    <% } %> 
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on('chat message', function(msg) {
+          var item = document.getElementById('users');
+            if(msg.length) { 
+              msg.forEach(({name, distance, hours}) => { 
+                let user = `
+                  <ul>
+                    <li>name:  ${name} </li>
+                    <li>distance:  ${distance} </li>
+                    <li>hours:  ${hours} </li>
+                  </ul>
+                `;
+                item.appendChild(user);
+              })  
+            } 
+          // item.textContent = msg;
+        });
+      </script>
+
+  </body>
+</html>
