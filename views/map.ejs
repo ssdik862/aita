@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Socket.IO map</title>
+    <title>users map</title>
   </head>
   <body>
 
-    <div id="users"></div>
-
     <% if(users.length) { %>
-      <% users.forEach(({name, distance, hours}) => { %>
-        <ul>
-          <li>name: <%= name %></li>
-          <li>distance: <%= distance %></li>
-          <li>hours: <%= hours %></li>
-        </ul>
-      <% }) %> 
+      <table id="users" cellpadding="2" cellspacing="1" style="margin: 0 auto; text-align: center; border: 2px solid #000">
+        <tr>
+          <th>name</th><th>distance</th><th>hours</th>
+        </tr>
+        <% users.forEach(({name, distance, hours}) => { %>
+          <tr>
+            <td><%=name%></td><td><%=distance%></td><td><%=hours%></td>
+          </tr>
+        <% }) %> 
+    </table>
     <% } %> 
     
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
         socket.on('chat message', function(msg) {
-          var item = document.getElementById('users');
+          var users = document.getElementById('users');
+          users.innerHTML = '';
+          var item = document.createElement('tr');
+          item.innerHTML = '<tr><th>name</th><th>distance</th><th>hours</th></tr>';
+          users.appendChild(item);
             if(msg.length) { 
-              msg.forEach(({name, distance, hours}) => { 
-                let user = `
-                  <ul>
-                    <li>name:  ${name} </li>
-                    <li>distance:  ${distance} </li>
-                    <li>hours:  ${hours} </li>
-                  </ul>
-                `;
-                item.appendChild(user);
+
+            msg.forEach(({name, distance, hours}) => { 
+                var item = document.createElement('tr');
+                item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
+                users.appendChild(item);
               })  
+
             } 
-          // item.textContent = msg;
         });
       </script>
 

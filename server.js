@@ -1,16 +1,16 @@
-const express = require("express");
-const morgan = require("morgan");
-const path = require('path');
-const mongoose = require("mongoose");
+import express from 'express';
+import morgan from 'morgan';
+import path from 'path';
+import mongoose from 'mongoose';
 
-const shortid = require('shortid');
+import shortid from 'shortid';
+import router from './router.js'
 
-const User = require('./models/users')
+import JsBarcode from 'jsbarcode';
 
+import User from './models/users.js'
 
-var JsBarcode = require('jsbarcode');
-
-const { DOMImplementation, XMLSerializer } = require('xmldom');
+import { DOMImplementation, XMLSerializer } from 'xmldom';
 const xmlSerializer = new XMLSerializer();
 const document = new DOMImplementation().createDocument('http://www.w3.org/1999/xhtml', 'html', null);
 const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -20,25 +20,35 @@ const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
 const app = express();
 app.set('view engine', 'ejs');
-const createPath = (page) => path.resolve(__dirname, 'views', `${page}.ejs`);
-const http = require('http');
+const createPath = (page) => path.resolve('views', `${page}.ejs`);
+import http from 'http';
 const server = http.createServer(app);
-const { Server } = require('socket.io');
+import { Server } from 'socket.io';
 const io = new Server(server);
 
-const PORT = process.env.PORT || 3000;
-const db = "mongodb+srv://aita_user:app_in_the_air@cluster0.m5dvo.mongodb.net/node-aita?retryWrites=true&w=majority";
+const PORT = 3000;
+const DB_URL = "mongodb+srv://aita_user:app_in_the_air@cluster0.m5dvo.mongodb.net/node-aita?retryWrites=true&w=majority";
 
-mongoose
-    .connect(db)
-    .then((res) => console.log('connect to DB'))
-    .catch((error) => console.log(error))
 
-server.listen(PORT, (error) => {
-    error ? console.log(error) : console.log(`listening port ${PORT}`);
-});
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+app.use(express.json());
+app.use('/api', router);
+
+async function startApp() {
+    await mongoose
+        .connect(DB_URL)
+        .then((res) => console.log('connect to DB'))
+        .catch((error) => console.log(error))
+    try {
+        server.listen(PORT, () => {
+            console.log(`server started. listening port ${PORT}`);
+        });
+    } catch (error) {
+        console.error(error);
+    }
+};
+startApp();
 
 /**
  * @swagger
@@ -58,7 +68,8 @@ io.on('connection', (socket) => {
 
     setInterval(async () => {
         const users = await User.find();
-        io.emit('chat message', `${users}`)
+        // console.log('users', users);
+        io.emit('chat message', users)
     }, 5000);
 
 });
@@ -66,29 +77,7 @@ io.on('connection', (socket) => {
 app.get('/map', async (req, res) => {
     const users = await User.find();
     res.render(createPath('map'), { users });
-});
-
-app.get('/add-user', (req, res) => {
-    const user = new User(
-        {
-            name : 'Ivan',
-            distance : 25,
-            hours: 786,
-        }
-    );
-
-    user
-        .save()
-        .then((result) => {
-            console.log(result);
-            res.json(result);
-        })
-        .catch((error) => {
-            console.log(error);
-            res
-            .status(404)
-            .send('something wrong  when post added')
-        });
+    // res.render('../views/map.ejs', { users });
 });
 
 app.get('/generateInviteCode/:id', async (req, res) => {
