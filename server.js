@@ -1,29 +1,23 @@
 import express from 'express';
 import morgan from 'morgan';
-import path from 'path';
 import mongoose from 'mongoose';
 
-import shortid from 'shortid';
-import router from './router.js'
 
-import JsBarcode from 'jsbarcode';
 
 import User from './models/users.js'
+import createPath from './helpers/createPath.js';
 
-import { DOMImplementation, XMLSerializer } from 'xmldom';
-const xmlSerializer = new XMLSerializer();
-const document = new DOMImplementation().createDocument('http://www.w3.org/1999/xhtml', 'html', null);
-const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-//TODO add compression
-// add cluters https://nodejs.org/api/cluster.html 
+
 
 const app = express();
 app.set('view engine', 'ejs');
-const createPath = (page) => path.resolve('views', `${page}.ejs`);
+
 import http from 'http';
 const server = http.createServer(app);
 import { Server } from 'socket.io';
+import ApiUserRoutes from './routes/ApiUserRoutes.js';
+import UserRoutes from './routes/UserRoutes.js';
 const io = new Server(server);
 
 const PORT = 3000;
@@ -33,7 +27,11 @@ const DB_URL = "mongodb+srv://aita_user:app_in_the_air@cluster0.m5dvo.mongodb.ne
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(express.json());
-app.use('/api', router);
+// app.use('/api', router);
+
+// app.use(userRoutes);
+app.use(ApiUserRoutes);
+app.use(UserRoutes);
 
 async function startApp() {
     await mongoose
@@ -80,65 +78,31 @@ app.get('/map', async (req, res) => {
     // res.render('../views/map.ejs', { users });
 });
 
-app.get('/generateInviteCode/:id', async (req, res) => {
 
-    const userId = req.params.id;
-    const code = shortid.generate();
+// app.get('/checkInviteCode/:code', async (req, res) => {
 
-    let user = undefined;
+//     const userCode = req.params.code;
 
-    try {
-        user = await User.findById(userId);
-        console.log(user);
-        if (user instanceof User) {
-            user.accessCode = code;
-            user.isCodeValid = true;
-            await user.save();
-        };
-        
-        JsBarcode(svgNode, code, {
-            xmlDocument: document,
-        });
-        
-        const svgText = xmlSerializer.serializeToString(svgNode);
-    
-        res.send(`
-            <p>passanger name: ${user.name}</p>
-            <p>id: ${req.params.id}</p>
-            <pre><code>${user}</pre></code>
-            ${svgText}
-        `);
-    } catch (error) {
-        console.error(error);
-    }
+//     try {
+//         const user = await User.findOne({accessCode : userCode});
+//         // const arr = await Movie.find({ year: { $gte: 1980, $lte: 1989 } });
+//         console.log('user', user);
+//         if (user instanceof User) {
+//             res.json({
+//                 isInvitationValid : user.isCodeValid,
+//                 userName : user.name,
+//                 userId : user.id
+//             });
+//         };
 
-});
+//         res.json(user);
 
+//     } catch (error) {
+//         console.error(error);
+//         res.send(`upsss`);
+//     }
 
-app.get('/checkInviteCode/:code', async (req, res) => {
-
-    const userCode = req.params.code;
-
-    try {
-        const user = await User.findOne({accessCode : userCode});
-        // const arr = await Movie.find({ year: { $gte: 1980, $lte: 1989 } });
-        console.log('user', user);
-        if (user instanceof User) {
-            res.json({
-                isInvitationValid : user.isCodeValid,
-                userName : user.name,
-                userId : user.id
-            });
-        };
-
-        res.json(user);
-
-    } catch (error) {
-        console.error(error);
-        res.send(`upsss`);
-    }
-
-});
+// });
 
 //JsBarcode("#itf-14", "1234567890123", {format: "itf14"});
 // <svg id="itf-14"></svg>
@@ -152,3 +116,6 @@ app.use((req, res) => {
 // aita_user
 //app_in_the_air
 
+
+//TODO add compression
+// add cluters https://nodejs.org/api/cluster.html 
