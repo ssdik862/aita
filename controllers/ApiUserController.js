@@ -1,7 +1,7 @@
 // packages
 import shortid from 'shortid';
 // services
-import UserService from "../services/UserService.js";
+import UserApiService from "../services/UserApiService.js";
 // helpers
 import getInviteCode from '../helpers/createInviteCode.js';
 // models
@@ -13,11 +13,11 @@ class ApiUserController {
         try {
             const { id } = req.params;
             const code = shortid.generate();
-            let user = await UserService.getOne(id);
-            user = await UserService.bindCodeToUser(user, code);
+            let user = await UserApiService.getOne(id);
+            user = await UserApiService.bindCodeToUser(user, code);
             const svgInviteCode = getInviteCode(code);
             
-            return res.send(`<p>name: ${user.name}</p>${svgInviteCode}`);
+            return res.status(200).send(`<p>name: ${user.name}</p>${svgInviteCode}`);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -26,10 +26,9 @@ class ApiUserController {
     async checkInviteCode(req, res) {
         try {
             const userCode = req.params.code;
-            console.log('usercode', userCode);
-            const user = await UserService.checkInviteCode(userCode);
+            const user = await UserApiService.checkInviteCode(userCode);
 
-            return res.json(user);
+            return res.status(200).json(user);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -37,9 +36,9 @@ class ApiUserController {
 
     async create(req, res) {
         try {
-            const user = await UserService.create(req.body);
+            const user = await UserApiService.create(req.body);
 
-            return res.json(user);
+            return res.status(200).json(user);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -47,9 +46,9 @@ class ApiUserController {
     
     async getAll(req, res) {
         try {
-            const users = await UserService.getAll();
+            const users = await UserApiService.getAll();
 
-            return res.json(users);
+            return res.status(200).json(users);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -57,9 +56,9 @@ class ApiUserController {
 
     async getOne(req, res) {
         try {
-            const user = await UserService.getOne(req.params.id);
+            const user = await UserApiService.getOne(req.params.id);
 
-            return res.json(user);
+            return res.status(200).json(user);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -67,9 +66,9 @@ class ApiUserController {
 
     async update(req, res) {
         try {
-            const updateUser = await UserService.update(req.body);
+            const updateUser = await UserApiService.update(req.body);
 
-            return res.json(updateUser);
+            return res.status(200).json(updateUser);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -77,9 +76,9 @@ class ApiUserController {
 
     async delete(req, res) {
         try {
-            const user = await UserService.delete(req.params.id);
+            const user = await UserApiService.delete(req.params.id);
 
-            return res.json(user);
+            return res.status(200).json(user);
         } catch (error) {
             ApiUserController.handleError(res, error)
         }

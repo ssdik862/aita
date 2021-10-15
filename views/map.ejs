@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>users map</title>
-  </head>
-  <body>
 
-    <% if(users.length) { %>
-      <table id="users" cellpadding="2" cellspacing="1" style="margin: 0 auto; text-align: center; border: 2px solid #000">
-        <tr>
-          <th>name</th><th>distance</th><th>hours</th>
-        </tr>
-        <% users.forEach(({name, distance, hours}) => { %>
-          <tr>
-            <td><%=name%></td><td><%=distance%></td><td><%=hours%></td>
-          </tr>
-        <% }) %> 
-    </table>
-    <% } %> 
-    
+<head>
+    <title>Flights Map</title>
+</head>
+
+<body>
+
+<h1 style="text-align:center;">Flights Map</h1>
+
+    <% if(users && users.length) { %>
+        <table id="users" style="margin: 0 auto; text-align: center; border: 2px solid #000">
+            <tr>
+                <th>name</th>
+                <th>distance</th>
+                <th>hours</th>
+            </tr>
+            <% users.forEach(({name, distance, hours})=> { %>
+                <tr>
+                    <td><%=name%></td>
+                    <td><%=distance%></td>
+                    <td><%=hours%></td>
+                </tr>
+            <% }) %>
+        </table>
+    <% } %>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-        socket.on('chat message', function(msg) {
-          var users = document.getElementById('users');
-          users.innerHTML = '';
-          var item = document.createElement('tr');
-          item.innerHTML = '<tr><th>name</th><th>distance</th><th>hours</th></tr>';
-          users.appendChild(item);
-            if(msg.length) { 
+        let socket = io();
+        socket.on("usersMap", function (data) {
+            let users = document.getElementById("users");
+            users.innerHTML = "";
 
-            msg.forEach(({name, distance, hours}) => { 
-                var item = document.createElement('tr');
-                item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
-                users.appendChild(item);
-              })  
-
-            } 
+            let item = document.createElement("tr");
+            item.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
+            users.appendChild(item);
+            
+            if (data.length) {
+                data.forEach(({ name, distance, hours }) => {
+                    let item = document.createElement("tr");
+                    item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
+                    users.appendChild(item);
+                });
+            };
         });
-      </script>
+    </script>
+</body>
 
-  </body>
 </html>

@@ -3,6 +3,12 @@ import ApiUserController from '../controllers/ApiUserController.js';
 
 const ApiUserRoutes = new Router();
 
+// Generate boarding pass image for user
+ApiUserRoutes.post('/api/users/generateInviteCode/:id', ApiUserController.generateInviteCode);
+// Check invitation (invite code) is valid
+ApiUserRoutes.post('/api/users/checkInviteCode/:code', ApiUserController.checkInviteCode);
+
+
 // Add New User
 ApiUserRoutes.post('/api/users', ApiUserController.create);
 // Get All Users
@@ -15,38 +21,10 @@ ApiUserRoutes.put('/api/users', ApiUserController.update);
 ApiUserRoutes.delete('/api/users/:id', ApiUserController.delete);
 
 
-// Generate boarding pass image for user
-ApiUserRoutes.post('/api/users/generateInviteCode/:id', ApiUserController.generateInviteCode);
+// Generate boarding pass image for user buy Get 
 ApiUserRoutes.get('/api/users/generateInviteCode/:id', ApiUserController.generateInviteCode);
-
-// Check invitation (invite code) is valid
-ApiUserRoutes.post('/api/users/checkInviteCode/:code', ApiUserController.checkInviteCode);
+// Check invitation (invite code) is valid by Get
 ApiUserRoutes.get('/api/users/checkInviteCode/:code', ApiUserController.checkInviteCode);
 
-
-// app.get('/checkInviteCode/:code', async (req, res) => {
-
-//     const userCode = req.params.code;
-
-//     try {
-//         const user = await User.findOne({accessCode : userCode});
-//         // const arr = await Movie.find({ year: { $gte: 1980, $lte: 1989 } });
-//         console.log('user', user);
-//         if (user instanceof User) {
-//             res.json({
-//                 isInvitationValid : user.isCodeValid,
-//                 userName : user.name,
-//                 userId : user.id
-//             });
-//         };
-
-//         res.json(user);
-
-//     } catch (error) {
-//         console.error(error);
-//         res.send(`upsss`);
-//     }
-
-// });
 
 export default ApiUserRoutes;

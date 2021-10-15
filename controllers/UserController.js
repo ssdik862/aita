@@ -1,48 +1,25 @@
-import User from './models/users.js'
-import UserService from './services/UserService.js';
+// helpers
+import createPath from '../helpers/createPath.js';
+// services
+import UserService from '../services/UserService.js';
 
 class UserController {
      
-    async create(req, res) {
+    async getArrivedUsers(req, res) {
         try {
-            const user = await UserService.create(req.body);
-            return res.json(user);
-        } catch (error) {
-            UserController.handleError(res, error)
-        }
-    };
-    
-    async getAll(req, res) {
-        try {
-            const users = await UserService.getAll();
-            return res.json(users);
+            const users = await UserService.getArrivedUsers();
+
+            return res.render(createPath('map'), { users });
         } catch (error) {
             UserController.handleError(res, error)
         }
     };
 
-    async getOne(req, res) {
+    async getBoardingUser(req, res) {
         try {
-            const user = await UserService.getOne(req.params.id);
-            return res.json(user);
-        } catch (error) {
-            UserController.handleError(res, error)
-        }
-    };
+            const user = await UserService.getBoardingUser();
 
-    async update(req, res) {
-        try {
-            const updateUser = await UserService.update(req.body);
-            return res.json(updateUser);
-        } catch (error) {
-            UserController.handleError(res, error)
-        }
-    };
-
-    async delete(req, res) {
-        try {
-            const user = await UserService.delete(req.params.id);
-            return res.json(user);
+            return res.render(createPath('boarding'), { user });
         } catch (error) {
             UserController.handleError(res, error)
         }

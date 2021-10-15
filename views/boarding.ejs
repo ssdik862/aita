@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Boarding Screen</title>
+</head>
+
+<body>
+
+<h1 style="text-align:center;">Boarding Now</h1>
+
+    <% if(user) { %>
+        <table id="user" style="margin: 0 auto; text-align: center; border: 2px solid #000">
+            <tr>
+                <th>name</th>
+                <th>distance</th>
+                <th>hours</th>
+            </tr>
+                <tr>
+                    <td><%=user.name%></td>
+                    <td><%=user.distance%></td>
+                    <td><%=user.hours%></td>
+                </tr>
+        </table>
+    <% } %>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io();
+        socket.on("userBoarding", function (data) {
+            let user = document.getElementById("user");
+            user.innerHTML = "";
+
+            let item = document.createElement("tr");
+            item.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
+            user.appendChild(item);
+            
+            if (data) {
+                const { name, distance, hours } = data;
+                let item = document.createElement("tr");
+                item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
+                user.appendChild(item);
+            };
+        });
+    </script>
+</body>
+
+</html>
