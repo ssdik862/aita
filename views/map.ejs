@@ -30,6 +30,7 @@
     <script>
         let socket = io();
         socket.on("usersMap", function (data) {
+            console.log('dataMap');
             let users = document.getElementById("users");
             users.innerHTML = "";
 

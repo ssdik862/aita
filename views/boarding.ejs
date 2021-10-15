@@ -28,6 +28,7 @@
     <script>
         let socket = io();
         socket.on("userBoarding", function (data) {
+            console.log('dataBoarding');
             let user = document.getElementById("user");
             user.innerHTML = "";
 
