@@ -1,4 +1,4 @@
-import User from "../models/users.js";
+import User from "../db/models/users.js";
 
 class UserApiService {
 
@@ -55,11 +55,11 @@ class UserApiService {
         return user;
     };
     
-    async update(user) {
-        if (!user._id) {
+    async update(userId, user) {
+        if (!userId) {
             throw new Error('ID not input')
         };
-        const updateUser = await User.findByIdAndUpdate(user._id, user, {new: true});
+        const updateUser = await User.findByIdAndUpdate(userId, user, {new: true});
 
         return updateUser;
     };

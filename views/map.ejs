@@ -4,13 +4,16 @@
 <head>
     <title>Flights Map</title>
 </head>
+<style>
+    #users {margin: 0 auto; text-align: center; border: 2px solid #000}
+</style>
 
 <body>
 
 <h1 style="text-align:center;">Flights Map</h1>
 
     <% if(users && users.length) { %>
-        <table id="users" style="margin: 0 auto; text-align: center; border: 2px solid #000">
+        <table id="users">
             <tr>
                 <th>name</th>
                 <th>distance</th>
@@ -24,26 +27,40 @@
                 </tr>
             <% }) %>
         </table>
+    <% } else { %>
+        <table id="users">
+            <tr>
+                <th>name</th>
+                <th>distance</th>
+                <th>hours</th>
+            </tr>
+            <tr>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </table>
     <% } %>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let socket = io();
         socket.on("usersMap", function (data) {
-            console.log('dataMap');
             let users = document.getElementById("users");
             users.innerHTML = "";
-
-            let item = document.createElement("tr");
-            item.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
-            users.appendChild(item);
-            
+            let tableHeaders = document.createElement("tr");
+            tableHeaders.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
+            users.appendChild(tableHeaders);
             if (data.length) {
                 data.forEach(({ name, distance, hours }) => {
                     let item = document.createElement("tr");
                     item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
                     users.appendChild(item);
                 });
+            } else {
+                let tableData = document.createElement("tr");
+                tableData.innerHTML = `<td>...</td><td>...</td><td>...</td>`;
+                users.appendChild(tableData);
             };
         });
     </script>

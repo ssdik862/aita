@@ -4,13 +4,15 @@
 <head>
     <title>Boarding Screen</title>
 </head>
-
+<style>
+    #user {margin: 0 auto; text-align: center; border: 2px solid #000}
+</style>
 <body>
 
 <h1 style="text-align:center;">Boarding Now</h1>
 
-    <% if(user) { %>
-        <table id="user" style="margin: 0 auto; text-align: center; border: 2px solid #000">
+    <% if (user) { %>
+        <table id="user">
             <tr>
                 <th>name</th>
                 <th>distance</th>
@@ -22,26 +24,38 @@
                     <td><%=user.hours%></td>
                 </tr>
         </table>
+    <% } else { %>
+        <table id="user">
+            <tr>
+                <th>name</th>
+                <th>distance</th>
+                <th>hours</th>
+            </tr>
+            <tr>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </table>
     <% } %>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let socket = io();
         socket.on("userBoarding", function (data) {
-            console.log('dataBoarding');
             let user = document.getElementById("user");
             user.innerHTML = "";
-
-            let item = document.createElement("tr");
-            item.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
-            user.appendChild(item);
-            
+            let tableHeaders = document.createElement("tr");
+            tableHeaders.innerHTML ="<tr><th>name</th><th>distance</th><th>hours</th></tr>";
+            user.appendChild(tableHeaders);
+            let tableData = document.createElement("tr");
             if (data) {
                 const { name, distance, hours } = data;
-                let item = document.createElement("tr");
-                item.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
-                user.appendChild(item);
-            };
+                tableData.innerHTML = `<td>${name}</td><td>${distance}</td><td>${hours}</td>`;
+            } else {
+                tableData.innerHTML = `<td>...</td><td>...</td><td>...</td>`;
+            }
+            user.appendChild(tableData);
         });
     </script>
 </body>

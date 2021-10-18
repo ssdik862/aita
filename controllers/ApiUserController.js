@@ -1,23 +1,27 @@
 // packages
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
+const idLength = 8;
 // services
 import UserApiService from "../services/UserApiService.js";
 // helpers
 import getInviteCode from '../helpers/createInviteCode.js';
-// models
-import User from '../models/users.js';
 
 class ApiUserController {
      
     async generateInviteCode(req, res) {
         try {
             const { id } = req.params;
-            const code = shortid.generate();
+            const code = nanoid(idLength);
             let user = await UserApiService.getOne(id);
             user = await UserApiService.bindCodeToUser(user, code);
             const svgInviteCode = getInviteCode(code);
             
-            return res.status(200).send(`<p>name: ${user.name}</p>${svgInviteCode}`);
+            // return res.status(200).send(`<p>name: ${user.name}</p>${svgInviteCode}`);
+            return res.status(200).json({
+                userName: user.name,
+                code: user.accessCode,
+                svgCode: svgInviteCode
+            });
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
@@ -57,6 +61,9 @@ class ApiUserController {
     async getOne(req, res) {
         try {
             const user = await UserApiService.getOne(req.params.id);
+            if (!user) {
+                return res.sendStatus(404)
+            };
 
             return res.status(200).json(user);
         } catch (error) {
@@ -65,8 +72,12 @@ class ApiUserController {
     };
 
     async update(req, res) {
+        const userId = req.params.id;
         try {
-            const updateUser = await UserApiService.update(req.body);
+            const updateUser = await UserApiService.update(userId, req.body);
+            if (!updateUser) {
+                return res.sendStatus(404)
+            };
 
             return res.status(200).json(updateUser);
         } catch (error) {
@@ -75,10 +86,14 @@ class ApiUserController {
     };
 
     async delete(req, res) {
+        const userId = req.params.id;
         try {
-            const user = await UserApiService.delete(req.params.id);
+            const user = await UserApiService.delete(userId);
+            if (!user) {
+                return res.sendStatus(404)
+            };
 
-            return res.status(200).json(user);
+            return res.status(200).json({id : userId});
         } catch (error) {
             ApiUserController.handleError(res, error)
         }
