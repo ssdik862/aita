@@ -1,4 +1,17 @@
-## AITA
+### AITA
+
+### Project describe
+service have:<br/>
+1. MongoDB db to store mocked users: ID, name, km distance, hours.
+2. API to generate boarding pass image for user (ID is required)<br/>
+Response have name and unique invite code and svg Image Code;
+3. API to check if invitation is valid (invite code is required). <br/>
+Return JSON with user name and ID.
+4. Service have 2 web urls:
+    + /map -> show statistics about each arrived user and <br/>
+update presentation every 10 seconds. There are just name, distance and hours;
+    + /boarding -> show last arrived user’s statistics in realtime<br/>
+when check validity API is called. Just name, distance and hours<br/>
 
 ### Install dependencies
 ```bash
