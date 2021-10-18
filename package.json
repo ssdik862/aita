@@ -5,6 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "start": "node server.js",
     "dev": "nodemon server.js",
     "multiNodes": "nodemon ./usingMultipleNodes/app.js",
     "test": "mocha --recursive --exit"
