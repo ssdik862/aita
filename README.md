@@ -1,5 +1,9 @@
 ## AITA
 
+### Install dependencies
+```bash
+npm i
+```
 ### Tests 
 ```bash
 npm test
