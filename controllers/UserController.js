@@ -2,16 +2,18 @@
 import createPath from '../helpers/createPath.js';
 // services
 import UserService from '../services/UserService.js';
+// modules
+import GeneralController from './GeneralController.js';
 
-class UserController {
-     
+class UserController extends GeneralController {
+
     async getArrivedUsers(req, res) {
         try {
             const users = await UserService.getArrivedUsers();
 
             return res.render(createPath('map'), { users });
         } catch (error) {
-            UserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -21,11 +23,9 @@ class UserController {
 
             return res.render(createPath('boarding'), { user });
         } catch (error) {
-            UserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
-
-    static handleError = (res, error) => res.status(500).send(error.message);
 
 }
 

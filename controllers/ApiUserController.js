@@ -5,8 +5,10 @@ const idLength = 8;
 import UserApiService from "../services/UserApiService.js";
 // helpers
 import getInviteCode from '../helpers/createInviteCode.js';
+// modules
+import GeneralController from './GeneralController.js';
 
-class ApiUserController {
+class ApiUserController extends GeneralController{
      
     async generateInviteCode(req, res) {
         try {
@@ -23,7 +25,7 @@ class ApiUserController {
                 svgCode: svgInviteCode
             });
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -34,7 +36,7 @@ class ApiUserController {
 
             return res.status(200).json(user);
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -44,7 +46,7 @@ class ApiUserController {
 
             return res.status(200).json(user);
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
     
@@ -54,7 +56,7 @@ class ApiUserController {
 
             return res.status(200).json(users);
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -67,7 +69,7 @@ class ApiUserController {
 
             return res.status(200).json(user);
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -81,7 +83,7 @@ class ApiUserController {
 
             return res.status(200).json(updateUser);
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
 
@@ -95,11 +97,9 @@ class ApiUserController {
 
             return res.status(200).json({id : userId});
         } catch (error) {
-            ApiUserController.handleError(res, error)
+            super.handleError(res, error);
         }
     };
-
-    static handleError = (res, error) => res.status(500).send(error.message);
 
 }
 
